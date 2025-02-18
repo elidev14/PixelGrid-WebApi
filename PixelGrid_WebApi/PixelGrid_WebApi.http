@@ -1,0 +1,6 @@
+@PixelGrid_WebApi_HostAddress = http://localhost:5291
+
+GET {{PixelGrid_WebApi_HostAddress}}/SqlEnvironment2DService/
+Accept: application/json
+
+###

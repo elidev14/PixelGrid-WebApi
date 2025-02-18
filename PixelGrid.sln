@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelGrid_WebApi", "PixelGrid_WebApi\PixelGrid_WebApi.csproj", "{AC83E535-2B98-4747-9B45-DB7B04B11104}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelGrid_WebApi.Test", "PixelGrid_WebApi.Test\PixelGrid_WebApi.Test.csproj", "{050CC5B8-721C-4174-BDED-ADF184D85DB0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC83E535-2B98-4747-9B45-DB7B04B11104}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC83E535-2B98-4747-9B45-DB7B04B11104}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC83E535-2B98-4747-9B45-DB7B04B11104}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC83E535-2B98-4747-9B45-DB7B04B11104}.Release|Any CPU.Build.0 = Release|Any CPU
+		{050CC5B8-721C-4174-BDED-ADF184D85DB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{050CC5B8-721C-4174-BDED-ADF184D85DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{050CC5B8-721C-4174-BDED-ADF184D85DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{050CC5B8-721C-4174-BDED-ADF184D85DB0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
