@@ -1,4 +1,4 @@
-using PixelGrid_WebApi.Services;
+﻿using PixelGrid_WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +9,8 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
-string connectionString = builder.Configuration["DB-ConnectionString"];
+string connectionString = builder.Configuration["SQLConnectionString"];
+bool connectionStringFound = !string.IsNullOrEmpty(connectionString);
 
 builder.Services.AddTransient<ISqlEnvironment2DService, SqlEnvironment2DService>(o => new SqlEnvironment2DService(connectionString));
 builder.Services.AddTransient<ISqlObject2DService, SqlObject2DService>(o => new SqlObject2DService(connectionString));
@@ -23,6 +24,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapGet("/", () => $"Api is up! Connecection string found: {(connectionStringFound ? '✅' : '❌')}");
 
 app.UseHttpsRedirection();
 
