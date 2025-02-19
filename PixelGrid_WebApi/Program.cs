@@ -1,4 +1,5 @@
-﻿using PixelGrid_WebApi.Services;
+﻿using Microsoft.AspNetCore.Identity;
+using PixelGrid_WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,19 @@ bool connectionStringFound = !string.IsNullOrEmpty(connectionString);
 builder.Services.AddTransient<ISqlEnvironment2DService, SqlEnvironment2DService>(o => new SqlEnvironment2DService(connectionString));
 builder.Services.AddTransient<ISqlObject2DService, SqlObject2DService>(o => new SqlObject2DService(connectionString));
 
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequiredLength = 512;
+})
+.AddRoles<IdentityRole>()
+.AddDapperStores(options =>
+{
+    options.ConnectionString = connectionString;
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,10 +41,13 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/", () => $"Api is up! Connecection string found: {(connectionStringFound ? '✅' : '❌')}");
 
+app.MapGroup("/account").MapIdentityApi<IdentityUser>();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireAuthorization();
+
 
 app.Run();
