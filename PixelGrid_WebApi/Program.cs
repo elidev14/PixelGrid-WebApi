@@ -20,7 +20,7 @@ builder.Services.AddTransient<ISqlObject2DService, SqlObject2DService>(o => new 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
 {
     options.User.RequireUniqueEmail = true;
-    options.Password.RequiredLength = 512;
+    options.Password.RequiredLength = 50;
 })
 .AddRoles<IdentityRole>()
 .AddDapperStores(options =>
