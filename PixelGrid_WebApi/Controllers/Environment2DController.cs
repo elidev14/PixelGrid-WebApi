@@ -50,7 +50,7 @@ namespace PixelGrid_WebApi.Controllers
             }
             catch (Exception err)
             {
-                return Ok(err);
+                return Ok("An error occured.");
             }
 
         }
