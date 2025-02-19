@@ -39,13 +39,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+app.UseAuthorization();
+
 app.MapGet("/", () => $"Api is up! Connecection string found: {(connectionStringFound ? '✅' : '❌')}");
 
 app.MapGroup("/account").MapIdentityApi<IdentityUser>();
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
 
 app.MapControllers().RequireAuthorization();
 
