@@ -6,11 +6,15 @@ namespace PixelGrid_WebApi.Datamodels
     {
 
         public Guid ID { get; set; }
-        public required string Name { get; set; }
-        public required string OwnerUserId { get; set; }
 
+        [Required]
+        public required string Name { get; set; }
+        [Required]
+        public required string OwnerUserId { get; set; }
+        [Required]
         [Range(10, 100)]
         public double MaxHeight { get; set; }
+        [Required]
         [Range(20, 200)]
         public double MaxLength { get; set; }
 

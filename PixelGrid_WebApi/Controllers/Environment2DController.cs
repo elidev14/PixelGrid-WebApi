@@ -18,9 +18,10 @@ namespace PixelGrid_WebApi.Controllers
         }
 
         [HttpPost("Add")]
-        public async Task<IActionResult> Add(double maxHeight, double maxLength, string name, string ownerUserId)
+        public async Task<IActionResult> Add(Environment2D environment)
         {
-            var data = new Environment2D { ID = Guid.NewGuid(), MaxHeight = maxHeight, MaxLength = maxLength, Name = name, OwnerUserId = ownerUserId };
+            var data = environment;
+            data.ID = Guid.NewGuid();
 
             await sqlE2DS.InsertDataAsync(data);
 
@@ -28,9 +29,14 @@ namespace PixelGrid_WebApi.Controllers
         }
 
         [HttpPatch("Update")]
-        public async Task<IActionResult> Update(Guid guid, double maxHeight, double maxLength, string name, string ownerUserId)
+        public async Task<IActionResult> Update(Guid guid, Environment2D environment)
         {
-            var data = new Environment2D { ID = guid, MaxHeight = maxHeight, MaxLength = maxLength, Name = name, OwnerUserId = ownerUserId };
+
+            if (guid == Guid.Empty) return BadRequest("Invalid GUID");
+
+            var data = environment;
+
+            data.ID = guid;
 
             await sqlE2DS.UpdateDataAsync(data);
 
@@ -40,13 +46,13 @@ namespace PixelGrid_WebApi.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(Guid guid)
         {
-            var result = sqlE2DS.GetDataAsync(guid).Result;
-
             try
             {
-                var dataObject = new Environment2D { Name = result.Name, OwnerUserId = result.OwnerUserId, MaxHeight = result.MaxHeight, MaxLength = result.MaxLength };
+                if (guid == Guid.Empty) return BadRequest("Invalid GUID");
 
-                return Ok(dataObject);
+                var result = sqlE2DS.GetDataAsync(guid).Result;
+
+                return Ok(result);
             }
             catch (Exception err)
             {
@@ -58,6 +64,8 @@ namespace PixelGrid_WebApi.Controllers
         [HttpDelete("Delete")]
         public async Task<IActionResult> Delete(Guid guid)
         {
+            if (guid == Guid.Empty) return BadRequest("Invalid GUID");
+
             await sqlE2DS.DeleteDataAsync(guid);
             return Ok("Environment2D object deleted");
         }
