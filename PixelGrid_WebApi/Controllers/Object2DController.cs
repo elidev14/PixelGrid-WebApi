@@ -16,8 +16,8 @@ namespace PixelGrid_WebApi.Controllers
             sqlO2DS = sqlObject2DService;
         }
 
-        [HttpPost("Add")]
-        public async Task<IActionResult> Add(Guid environmentID, Object2D object2D)
+        [HttpPost("{environmentID}")]
+        public async Task<IActionResult> Add([FromRoute] Guid environmentID, [FromBody] Object2D object2D)
         {
 
             if (environmentID == Guid.Empty) return BadRequest("Invalid environmentID");
@@ -30,28 +30,26 @@ namespace PixelGrid_WebApi.Controllers
             return Ok("Object2D created successfully.");
         }
 
-        [HttpPatch("Update")]
-        public async Task<IActionResult> Update(Guid guid, Guid environmentID, Object2D object2D)
+        [HttpPut]
+        public async Task<IActionResult> Update(Object2D object2D)
         {
-
-            if (guid == Guid.Empty) return BadRequest("Invalid GUID");
-
-            object2D.ID = guid;
-            object2D.EnvironmentID = environmentID;
+            if (object2D.ID == Guid.Empty) return BadRequest("Invalid ID");
 
             await sqlO2DS.UpdateDataAsync(object2D);
 
             return Ok("Object2D updated");
         }
 
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get(Guid guid)
+
+
+        [HttpGet("{environmentID}")]
+        public async Task<IActionResult> Get([FromRoute] Guid environmentID)
         {
             try
             {
-                if (guid == Guid.Empty) return BadRequest("Invalid GUID");
+                if (environmentID == Guid.Empty) return BadRequest("Invalid GUID");
 
-                var result = await sqlO2DS.GetDataAsync(guid); // Awaiting the task properly
+                var result = await sqlO2DS.GetDataAsync(environmentID); // Awaiting the task properly
 
                 return Ok(result);
             }
@@ -62,12 +60,12 @@ namespace PixelGrid_WebApi.Controllers
         }
 
 
-        [HttpDelete("Delete")]
-        public async Task<IActionResult> Delete(Guid guid)
+        [HttpDelete("{environmentID}/{id}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid environmentID, [FromRoute] Guid id)
         {
-            if (guid == Guid.Empty) return BadRequest("Invalid GUID");
+            if (environmentID == Guid.Empty || environmentID == Guid.Empty) return BadRequest("Invalid ID");
 
-            await sqlO2DS.DeleteDataAsync(guid);
+            await sqlO2DS.DeleteDataAsync(environmentID, id);
             return Ok("Object2D object deleted");
         }
     }

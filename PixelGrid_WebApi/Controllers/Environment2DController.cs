@@ -17,8 +17,8 @@ namespace PixelGrid_WebApi.Controllers
             sqlE2DS = sqlEnvironment2DService;
         }
 
-        [HttpPost("Add")]
-        public async Task<IActionResult> Add(Environment2D environment)
+        [HttpPost]
+        public async Task<IActionResult> AddEnvironment2D([FromBody] Environment2D environment)
         {
             var data = environment;
             data.ID = Guid.NewGuid();
@@ -28,29 +28,23 @@ namespace PixelGrid_WebApi.Controllers
             return Ok("Environment2D object created");
         }
 
-        [HttpPatch("Update")]
-        public async Task<IActionResult> Update(Guid guid, Environment2D environment)
+        [HttpPut]
+        public async Task<IActionResult> UpdateEnvironment2D(Environment2D environment)
         {
+            if (environment.ID == Guid.Empty) return BadRequest("Invalid ID");
 
-            if (guid == Guid.Empty) return BadRequest("Invalid GUID");
-
-            var data = environment;
-
-            data.ID = guid;
-
-            await sqlE2DS.UpdateDataAsync(data);
+            await sqlE2DS.UpdateDataAsync(environment);
 
             return Ok("Environment2D object updated");
         }
 
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get(Guid guid)
+        [HttpGet]
+        public async Task<IActionResult> GetEnvironment2Ds()
         {
             try
             {
-                if (guid == Guid.Empty) return BadRequest("Invalid GUID");
 
-                var result = sqlE2DS.GetDataAsync(guid).Result;
+                var result = sqlE2DS.GetListOfDataAsync().Result;
 
                 return Ok(result);
             }
@@ -61,8 +55,8 @@ namespace PixelGrid_WebApi.Controllers
 
         }
 
-        [HttpDelete("Delete")]
-        public async Task<IActionResult> Delete(Guid guid)
+        [HttpDelete("{guid}")]
+        public async Task<IActionResult> DeleteEnvironment2D([FromRoute] Guid guid)
         {
             if (guid == Guid.Empty) return BadRequest("Invalid GUID");
 

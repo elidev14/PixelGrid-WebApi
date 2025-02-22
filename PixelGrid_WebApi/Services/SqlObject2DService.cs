@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using PixelGrid_WebApi.Datamodels;
-using System.Security.Cryptography;
 
 namespace PixelGrid_WebApi.Services
 {
@@ -44,28 +43,28 @@ namespace PixelGrid_WebApi.Services
             }
         }
 
-        public async Task DeleteDataAsync(Guid id)
+        public async Task DeleteDataAsync(Guid environmentID, Guid id)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                await sqlConnection.ExecuteAsync("DELETE FROM [Object2D] WHERE ID = @id", new { id });
+                await sqlConnection.ExecuteAsync("DELETE FROM [Object2D] WHERE ID = @id AND EnvironmentID = @environmentID", new { id, environmentID });
             }
         }
 
-        public async Task<Object2D> GetDataAsync(Guid id)
-        {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                return await connection.QuerySingleOrDefaultAsync<Object2D>("SELECT * FROM [Object2D] WHERE ID = @id", new { id });
-            };
-        }
 
-        public async Task<IEnumerable<Object2D>> GetListOfDataAsync()
+        /// <summary>
+        /// Get all objects in with the Guid 'environmentID' in the database
+        /// </summary>
+        /// <param name="environmentID"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Object2D>> GetDataAsync(Guid environmentID)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                return await connection.QueryAsync<Object2D>("SELECT * FROM [Object2D]");
-            };
+                return await connection.QueryAsync<Object2D>(
+                    "SELECT * FROM [Object2D] WHERE EnvironmentID = @environmentID",
+                    new { environmentID });
+            }
         }
     }
 }

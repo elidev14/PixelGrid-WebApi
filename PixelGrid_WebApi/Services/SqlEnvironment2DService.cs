@@ -51,16 +51,6 @@ namespace PixelGrid_WebApi.Services
             }
         }
 
-        public async Task<Environment2D> GetDataAsync(Guid guid)
-        {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                return await connection.QuerySingleOrDefaultAsync<Environment2D>(
-                        "SELECT * FROM [Environment2D]" +
-                        " WHERE ID = @ID", new { ID = guid });
-            };
-        }
-
         public async Task<IEnumerable<Environment2D>> GetListOfDataAsync()
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -68,7 +58,6 @@ namespace PixelGrid_WebApi.Services
                 return await connection.QueryAsync<Environment2D>("SELECT * FROM [Environment2D]");
             };
         }
-
 
     }
 }
