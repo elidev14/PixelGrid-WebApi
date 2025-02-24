@@ -6,7 +6,7 @@ namespace PixelGrid_WebApi.Controllers
 {
 
     [ApiController]
-    [Route("[controller]")]
+    [Route("Environment2D")]
     public class Object2DController : ControllerBase
     {
         ISqlObject2DService sqlO2DS;
@@ -16,11 +16,12 @@ namespace PixelGrid_WebApi.Controllers
             sqlO2DS = sqlObject2DService;
         }
 
-        [HttpPost("{environmentID}")]
+        [HttpPost("{environmentID}/[controller]")]
         public async Task<IActionResult> Add([FromRoute] Guid environmentID, [FromBody] Object2D object2D)
         {
 
-            if (environmentID == Guid.Empty) return BadRequest("Invalid environmentID");
+            if (environmentID == Guid.Empty)
+                return BadRequest("Invalid environmentID");
 
             object2D.ID = Guid.NewGuid();
             object2D.EnvironmentID = environmentID;
@@ -30,10 +31,11 @@ namespace PixelGrid_WebApi.Controllers
             return Ok("Object2D created successfully.");
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(Object2D object2D)
+        [HttpPut("{environmentID}/[controller]")]
+        public async Task<IActionResult> Update([FromRoute] Guid environmentID, Object2D object2D)
         {
-            if (object2D.ID == Guid.Empty) return BadRequest("Invalid ID");
+            if (object2D.ID == Guid.Empty)
+                return BadRequest("Invalid ID");
 
             await sqlO2DS.UpdateDataAsync(object2D);
 
@@ -42,12 +44,13 @@ namespace PixelGrid_WebApi.Controllers
 
 
 
-        [HttpGet("{environmentID}")]
+        [HttpGet("{environmentID}/[controller]")]
         public async Task<IActionResult> Get([FromRoute] Guid environmentID)
         {
             try
             {
-                if (environmentID == Guid.Empty) return BadRequest("Invalid GUID");
+                if (environmentID == Guid.Empty)
+                    return BadRequest("Invalid GUID");
 
                 var result = await sqlO2DS.GetDataAsync(environmentID); // Awaiting the task properly
 
@@ -60,10 +63,11 @@ namespace PixelGrid_WebApi.Controllers
         }
 
 
-        [HttpDelete("{environmentID}/{id}")]
+        [HttpDelete("{environmentID}/[Controller]/{id}")]
         public async Task<IActionResult> Delete([FromRoute] Guid environmentID, [FromRoute] Guid id)
         {
-            if (environmentID == Guid.Empty || environmentID == Guid.Empty) return BadRequest("Invalid ID");
+            if (environmentID == Guid.Empty || id == Guid.Empty)
+                return BadRequest("Invalid ID");
 
             await sqlO2DS.DeleteDataAsync(environmentID, id);
             return Ok("Object2D object deleted");

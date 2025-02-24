@@ -44,18 +44,28 @@ namespace PixelGrid_WebApi.Services
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                await sqlConnection.ExecuteAsync("" +
+                await sqlConnection.ExecuteAsync(
                     "DELETE FROM [Environment2D] " +
                     "WHERE ID = @id",
                     new { id });
             }
         }
 
-        public async Task<IEnumerable<Environment2D>> GetListOfDataAsync()
+        public async Task<Environment2D> GetDataAsync(Guid id)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                return await connection.QueryAsync<Environment2D>("SELECT * FROM [Environment2D]");
+                return await connection.QuerySingleOrDefaultAsync<Environment2D>(
+                            "SELECT * FROM [Environment2D] " +
+                            "WHERE ID = @id", new { id });
+            };
+        }
+
+        public async Task<IEnumerable<Environment2D>> GetListOfDataAsync(string OwnerUserId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                return await connection.QueryAsync<Environment2D>("SELECT * FROM [Environment2D] WHERE OwnerUserId = @OwnerUserId", new { OwnerUserId });
             };
         }
 

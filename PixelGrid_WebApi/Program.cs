@@ -15,7 +15,10 @@ bool connectionStringFound = !string.IsNullOrEmpty(connectionString);
 
 builder.Services.AddTransient<ISqlEnvironment2DService, SqlEnvironment2DService>(o => new SqlEnvironment2DService(connectionString));
 builder.Services.AddTransient<ISqlObject2DService, SqlObject2DService>(o => new SqlObject2DService(connectionString));
-
+// Adding the HTTP Context accessor to be injected. This is needed by the AspNetIdentityUserRepository
+// to resolve the current user.
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IAuthenticationService, AspNetIdentityAuthenticationService>();
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
 {

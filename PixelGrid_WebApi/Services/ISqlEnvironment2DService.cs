@@ -7,6 +7,7 @@ namespace PixelGrid_WebApi.Services
         Task InsertDataAsync(Environment2D data);
         Task UpdateDataAsync(Environment2D environment);
         Task DeleteDataAsync(Guid id);
-        Task<IEnumerable<Environment2D>> GetListOfDataAsync();
+        Task<Environment2D> GetDataAsync(Guid id);
+        Task<IEnumerable<Environment2D>> GetListOfDataAsync(string OwnerUserId);
     }
 }
