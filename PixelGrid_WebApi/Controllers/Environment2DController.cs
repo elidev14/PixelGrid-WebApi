@@ -23,6 +23,10 @@ namespace PixelGrid_WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> AddEnvironment2D([FromBody] Environment2D environment)
         {
+            // Check if the limit has not beenn exceed if it has return a bad request
+            if (sqlE2DS.GetListOfDataAsync(authService.GetCurrentAuthenticatedUserId()).Result.Count() >= 5)
+                return BadRequest("You have reached the limit of 5 environments");
+
             var data = environment;
             data.ID = Guid.NewGuid();
             data.OwnerUserId = authService.GetCurrentAuthenticatedUserId();
