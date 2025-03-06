@@ -22,7 +22,6 @@ builder.Services.AddTransient<IAuthenticationService, AspNetIdentityAuthenticati
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
 {
-    options.User.RequireUniqueEmail = true;
     options.Password.RequiredLength = 50;
 })
 .AddRoles<IdentityRole>()

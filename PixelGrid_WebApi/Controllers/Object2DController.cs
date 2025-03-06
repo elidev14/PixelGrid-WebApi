@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using PixelGrid_WebApi.Datamodels;
 using PixelGrid_WebApi.Services;
+using System;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PixelGrid_WebApi.Controllers
 {
@@ -10,10 +13,14 @@ namespace PixelGrid_WebApi.Controllers
     public class Object2DController : ControllerBase
     {
         ISqlObject2DService sqlO2DS;
+        ISqlEnvironment2DService sqlE2DS;
+        IAuthenticationService authService;
 
-        public Object2DController(ISqlObject2DService sqlObject2DService)
+
+        public Object2DController(ISqlObject2DService sqlObject2DService, ISqlEnvironment2DService sqlEnvironment2DService, IAuthenticationService authenticationService)
         {
             sqlO2DS = sqlObject2DService;
+            authService = authenticationService;
         }
 
         [HttpPost("{environmentID}/[controller]")]
@@ -22,6 +29,11 @@ namespace PixelGrid_WebApi.Controllers
 
             if (environmentID == Guid.Empty)
                 return BadRequest("Invalid environmentID");
+
+            var data = sqlE2DS.GetDataAsync(environmentID).Result;
+
+            if (data.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
+                return Unauthorized("User is not allowed to add the object to the environment");
 
             object2D.ID = Guid.NewGuid();
             object2D.EnvironmentID = environmentID;
@@ -37,6 +49,11 @@ namespace PixelGrid_WebApi.Controllers
             if (object2D.ID == Guid.Empty)
                 return BadRequest("Invalid ID");
 
+            var data = sqlE2DS.GetDataAsync(environmentID).Result;
+
+            if (data.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
+                return Unauthorized("User is not allowed to update the object");
+
             await sqlO2DS.UpdateDataAsync(object2D);
 
             return Ok("Object2D updated");
@@ -51,6 +68,11 @@ namespace PixelGrid_WebApi.Controllers
             {
                 if (environmentID == Guid.Empty)
                     return BadRequest("Invalid GUID");
+
+                var data = sqlE2DS.GetDataAsync(environmentID).Result;
+
+                if (data.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
+                    return Unauthorized("User is not allowed to view the object");
 
                 var result = await sqlO2DS.GetDataAsync(environmentID); // Awaiting the task properly
 
@@ -68,6 +90,11 @@ namespace PixelGrid_WebApi.Controllers
         {
             if (environmentID == Guid.Empty || id == Guid.Empty)
                 return BadRequest("Invalid ID");
+
+            var data = sqlE2DS.GetDataAsync(environmentID).Result;
+
+            if (data.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
+                return Unauthorized("User is not allowed to delete the object");
 
             await sqlO2DS.DeleteDataAsync(environmentID, id);
             return Ok("Object2D object deleted");
