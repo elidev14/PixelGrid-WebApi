@@ -7,10 +7,10 @@ namespace PixelGrid_WebApi.Datamodels
 
         public Guid ID { get; set; }
 
+        public string OwnerUserId { get; set; }
+
         [Required]
         public string Name { get; set; }
-
-        public string OwnerUserId { get; set; }
 
         [Required]
         [Range(10, 100)]
