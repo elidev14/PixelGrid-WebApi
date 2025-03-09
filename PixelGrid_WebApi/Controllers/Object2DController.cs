@@ -1,36 +1,37 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 using PixelGrid_WebApi.Datamodels;
 using PixelGrid_WebApi.Services;
 using System;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Threading.Tasks;
 
 namespace PixelGrid_WebApi.Controllers
 {
-
     [ApiController]
-    [Route("Environment2D")]
+    [Route("Environment2D/{environmentID}/objects")] 
     public class Object2DController : ControllerBase
     {
-        ISqlObject2DService sqlO2DS;
-        ISqlEnvironment2DService sqlE2DS;
-        IAuthenticationService authService;
+        private readonly ISqlObject2DService sqlO2DS;
+        private readonly ISqlEnvironment2DService sqlE2DS;
+        private readonly IAuthenticationService authService;
 
-
-        public Object2DController(ISqlObject2DService sqlObject2DService, ISqlEnvironment2DService sqlEnvironment2DService, IAuthenticationService authenticationService)
+        public Object2DController(ISqlObject2DService sqlObject2DService,
+                                  ISqlEnvironment2DService sqlEnvironment2DService,
+                                  IAuthenticationService authenticationService)
         {
             sqlO2DS = sqlObject2DService;
+            sqlE2DS = sqlEnvironment2DService; 
             authService = authenticationService;
         }
 
-        [HttpPost("{environmentID}/[controller]")]
+        [HttpPost]
         public async Task<IActionResult> Add([FromRoute] Guid environmentID, [FromBody] Object2D object2D)
         {
-
             if (environmentID == Guid.Empty)
                 return BadRequest("Invalid environmentID");
 
-            var data = sqlE2DS.GetDataAsync(environmentID).Result;
+            var data = await sqlE2DS.GetDataAsync(environmentID);
+            if (data == null)
+                return NotFound("Environment not found");
 
             if (data.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
                 return Unauthorized("User is not allowed to add the object to the environment");
@@ -43,61 +44,57 @@ namespace PixelGrid_WebApi.Controllers
             return Ok("Object2D created successfully.");
         }
 
-        [HttpPut("{environmentID}/[controller]")]
-        public async Task<IActionResult> Update([FromRoute] Guid environmentID, Object2D object2D)
+        [HttpPut]
+        public async Task<IActionResult> Update([FromRoute] Guid environmentID, [FromBody] Object2D object2D)
         {
             if (object2D.ID == Guid.Empty)
                 return BadRequest("Invalid ID");
 
-            var data = sqlE2DS.GetDataAsync(environmentID).Result;
+            var data = await sqlE2DS.GetDataAsync(environmentID);
+            if (data == null)
+                return NotFound("Environment not found");
 
             if (data.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
                 return Unauthorized("User is not allowed to update the object");
 
             await sqlO2DS.UpdateDataAsync(object2D);
 
-            return Ok("Object2D updated");
+            return Ok("Object2D updated successfully.");
         }
 
-
-
-        [HttpGet("{environmentID}/[controller]")]
+        [HttpGet]
         public async Task<IActionResult> Get([FromRoute] Guid environmentID)
         {
-            try
-            {
-                if (environmentID == Guid.Empty)
-                    return BadRequest("Invalid GUID");
+            if (environmentID == Guid.Empty)
+                return BadRequest("Invalid GUID");
 
-                var data = sqlE2DS.GetDataAsync(environmentID).Result;
+            var data = await sqlE2DS.GetDataAsync(environmentID);
+            if (data == null)
+                return NotFound("Environment not found");
 
-                if (data.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
-                    return Unauthorized("User is not allowed to view the object");
+            if (data.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
+                return Unauthorized("User is not allowed to view the objects");
 
-                var result = await sqlO2DS.GetDataAsync(environmentID); // Awaiting the task properly
+            var result = await sqlO2DS.GetDataAsync(environmentID);
 
-                return Ok(result);
-            }
-            catch (Exception err)
-            {
-                return StatusCode(500, $"Internal Server Error: {err.Message}");
-            }
+            return Ok(result);
         }
 
-
-        [HttpDelete("{environmentID}/[Controller]/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] Guid environmentID, [FromRoute] Guid id)
         {
             if (environmentID == Guid.Empty || id == Guid.Empty)
                 return BadRequest("Invalid ID");
 
-            var data = sqlE2DS.GetDataAsync(environmentID).Result;
+            var data = await sqlE2DS.GetDataAsync(environmentID);
+            if (data == null)
+                return NotFound("Environment not found");
 
             if (data.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
                 return Unauthorized("User is not allowed to delete the object");
 
             await sqlO2DS.DeleteDataAsync(environmentID, id);
-            return Ok("Object2D object deleted");
+            return Ok("Object2D deleted successfully.");
         }
     }
 }
