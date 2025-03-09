@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace PixelGrid_WebApi.Controllers
 {
     [ApiController]
-    [Route("Environment2D/{environmentID}/objects")] 
+    [Route("Environment2D/{environmentID}/Object2D")] 
     public class Object2DController : ControllerBase
     {
         private readonly ISqlObject2DService sqlO2DS;
