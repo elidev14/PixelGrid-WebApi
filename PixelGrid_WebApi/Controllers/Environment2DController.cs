@@ -33,7 +33,7 @@ namespace PixelGrid_WebApi.Controllers
 
             await sqlE2DS.InsertDataAsync(data);
 
-            return Ok("Environment2D object created");
+            return Ok(data);
         }
 
         [HttpPut]
