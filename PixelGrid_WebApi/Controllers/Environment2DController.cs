@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PixelGrid_WebApi.Datamodels;
 using PixelGrid_WebApi.Services;
 using System;
@@ -23,13 +24,31 @@ namespace PixelGrid_WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> AddEnvironment2D([FromBody] Environment2D environment)
         {
+
+            if (environment == null)
+            {
+                return BadRequest("Invalid environment data.");
+            }
+
+            string userId = authService.GetCurrentAuthenticatedUserId();
+
+
             // Check if the limit has not beenn exceed if it has return a bad request
-            if (sqlE2DS.GetListOfDataAsync(authService.GetCurrentAuthenticatedUserId()).Result.Count() >= 5)
+            if (sqlE2DS.GetListOfDataAsync(userId).Result.Count() >= 5)
                 return BadRequest("You have reached the limit of 5 environments");
+
+            var existingEnvironment = (await sqlE2DS.GetListOfDataAsync(userId))
+                       .FirstOrDefault(e => e.OwnerUserId == userId && e.Name == environment.Name);
+
+            if (existingEnvironment != null)
+            {
+                return Conflict(new { message = $"An environment with the name '{environment.Name}' already exists." });
+            }
+
 
             var data = environment;
             data.ID = Guid.NewGuid();
-            data.OwnerUserId = authService.GetCurrentAuthenticatedUserId();
+            data.OwnerUserId = userId;
 
             await sqlE2DS.InsertDataAsync(data);
 
