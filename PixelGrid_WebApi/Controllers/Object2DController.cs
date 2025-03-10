@@ -41,8 +41,9 @@ namespace PixelGrid_WebApi.Controllers
 
             await sqlO2DS.InsertDataAsync(object2D);
 
-            return Ok("Object2D created successfully.");
+            return Ok(object2D); // 🔹 Return the newly created Object2D as JSON
         }
+
 
         [HttpPut]
         public async Task<IActionResult> Update([FromRoute] Guid environmentID, [FromBody] Object2D object2D)
@@ -59,8 +60,9 @@ namespace PixelGrid_WebApi.Controllers
 
             await sqlO2DS.UpdateDataAsync(object2D);
 
-            return Ok("Object2D updated successfully.");
+            return Ok(object2D); // 🔹 Return the updated Object2D as JSON
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Get([FromRoute] Guid environmentID)
