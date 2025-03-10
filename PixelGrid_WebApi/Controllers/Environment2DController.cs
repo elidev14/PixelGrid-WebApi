@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PixelGrid_WebApi.Datamodels;
 using PixelGrid_WebApi.Services;
-using System;
 
 namespace PixelGrid_WebApi.Controllers
 {
