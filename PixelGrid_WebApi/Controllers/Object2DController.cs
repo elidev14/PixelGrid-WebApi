@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PixelGrid_WebApi.Datamodels;
 using PixelGrid_WebApi.Services;
-using System;
-using System.Threading.Tasks;
+
 
 namespace PixelGrid_WebApi.Controllers
 {
@@ -21,6 +20,29 @@ namespace PixelGrid_WebApi.Controllers
             sqlO2DS = sqlObject2DService;
             sqlE2DS = sqlEnvironment2DService; 
             authService = authenticationService;
+        }
+
+        [HttpPost("batch")]
+        public async Task<IActionResult> AddMultiple([FromRoute] Guid environmentID, [FromBody] List<Object2D> objects2D)
+        {
+            if (environmentID == Guid.Empty)
+                return BadRequest("Invalid environmentID");
+
+            var data = await sqlE2DS.GetDataAsync(environmentID);
+            if (data == null)
+                return NotFound("Environment not found");
+
+            if (data.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
+                return Unauthorized("User is not allowed to add objects to the environment");
+
+            foreach (var object2D in objects2D)
+            {
+                object2D.ID = Guid.NewGuid();
+                object2D.EnvironmentID = environmentID;
+                await sqlO2DS.InsertDataAsync(object2D);
+            }
+
+            return Ok(objects2D); // Return the list of created objects
         }
 
         [HttpPost]
