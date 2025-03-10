@@ -22,7 +22,7 @@ namespace PixelGrid_WebApi.Services
             {
                 await connection.ExecuteAsync(
                     "INSERT INTO [Environment2D] " +
-                    "VALUES (@ID, @Name, @OwnerUserId, @MaxHeight, @MaxLength)", data);
+                    "VALUES (@ID, @Name, @OwnerUserId, @MaxHeight, @MaxLength, @Seed)", data);
                 Console.WriteLine("Environment2D object created");
             };
         }
@@ -33,7 +33,7 @@ namespace PixelGrid_WebApi.Services
             {
                 await sqlConnection.ExecuteAsync(
                    "UPDATE [Environment2D] " +
-                   "SET Name = @Name, OwnerUserId = @OwnerUserId, MaxHeight = @MaxHeight, MaxLength = @MaxLength " +
+                   "SET Name = @Name, OwnerUserId = @OwnerUserId, MaxHeight = @MaxHeight, MaxLength = @MaxLength, Seed = @Seed " +
                    "WHERE ID = @ID",
                    environment
                );

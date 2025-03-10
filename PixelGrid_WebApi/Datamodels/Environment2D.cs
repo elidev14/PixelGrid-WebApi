@@ -22,5 +22,8 @@ namespace PixelGrid_WebApi.Datamodels
         [Range(20, 200)]
         public double MaxLength { get; set; }
 
+        [Required]
+        public int Seed { get; set; }
+
     }
 }
