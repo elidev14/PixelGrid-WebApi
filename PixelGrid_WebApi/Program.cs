@@ -23,6 +23,10 @@ builder.Services.AddTransient<IAuthenticationService, AspNetIdentityAuthenticati
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
 {
     options.Password.RequiredLength = 10;
+    options.Password.RequireDigit = true;          // At least 1 number
+    options.Password.RequireUppercase = true;      // At least 1 uppercase letter
+    options.Password.RequireLowercase = true;      // At least 1 lowercase letter
+    options.Password.RequireNonAlphanumeric = true; // At least 1 special character (e.g., @, #, !)
 })
 .AddRoles<IdentityRole>()
 .AddDapperStores(options =>
