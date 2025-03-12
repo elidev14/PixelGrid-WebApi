@@ -31,10 +31,6 @@ namespace PixelGrid_WebApi.Controllers
 
             string userId = authService.GetCurrentAuthenticatedUserId();
 
-
-            if (environment.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
-                return Unauthorized("User is not allowed to add this environment");
-
             // Check if the limit has not been exceeded. If it has, return a bad request.
             var existingEnvironments = await sqlE2DS.GetListOfDataAsync(userId);
             if (existingEnvironments.Count() >= 5)
