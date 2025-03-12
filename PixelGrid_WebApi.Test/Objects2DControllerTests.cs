@@ -8,7 +8,7 @@ using PixelGrid_WebApi.Services;
 public class Object2DControllerTests
 {
     [TestMethod]
-    public async Task Add_ReturnsBadRequest_WhenEnvironmentIDIsEmpty() // Arrange, Act, Assert
+    public async Task Add_ReturnsBadRequest_WhenEnvironmentIDIsEmpty() 
     {
         // Arrange
         var mockSqlObject2DService = new Mock<ISqlObject2DService>();
@@ -21,12 +21,12 @@ public class Object2DControllerTests
 
         // Assert
         Assert.IsInstanceOfType<BadRequestObjectResult>(result); 
-        var badRequestResult = (BadRequestObjectResult)result;  // Cast naar het juiste type
+        var badRequestResult = (BadRequestObjectResult)result;  
         Assert.AreEqual("Invalid environmentID", badRequestResult.Value);
     }
 
     [TestMethod]
-    public async Task Add_ReturnsUnauthorized_WhenUserIsNotOwner() // Arrange, Act, Assert
+    public async Task Add_ReturnsUnauthorized_WhenUserIsNotOwner() 
     {
         // Arrange
         var environmentId = Guid.NewGuid();
@@ -35,9 +35,9 @@ public class Object2DControllerTests
         var mockAuthService = new Mock<IAuthenticationService>();
 
         mockSqlEnvironment2DService.Setup(s => s.GetDataAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Environment2D { ID = environmentId, OwnerUserId = "DifferentUser" });
+            .ReturnsAsync(new Environment2D { ID = environmentId, OwnerUserId = "differentUser" });
 
-        mockAuthService.Setup(a => a.GetCurrentAuthenticatedUserId()).Returns("CurrentUser"); // When 'GetCurrentAuthenticatedUserId()' method gets called it will return 'CurrentUser'
+        mockAuthService.Setup(a => a.GetCurrentAuthenticatedUserId()).Returns("currentUser"); // When 'GetCurrentAuthenticatedUserId()' method gets called it will return 'CurrentUser'
 
         var controller = new Object2DController(mockSqlObject2DService.Object, mockSqlEnvironment2DService.Object, mockAuthService.Object);
 
@@ -45,14 +45,14 @@ public class Object2DControllerTests
         var result = await controller.Add(environmentId, new Object2D());
 
         // Assert
-        Assert.IsInstanceOfType<UnauthorizedObjectResult>(result); // Generieke overload
-        var unauthorizedResult = (UnauthorizedObjectResult)result;  // Cast naar het juiste type
+        Assert.IsInstanceOfType<UnauthorizedObjectResult>(result); 
+        var unauthorizedResult = (UnauthorizedObjectResult)result;  
         Assert.AreEqual("User is not allowed to add the object to the environment", unauthorizedResult.Value);
     }
 
 
     [TestMethod]
-    public async Task Add_ReturnsOk_WhenObjectIsAddedSuccessfully() // Arrange, Act, Assert
+    public async Task Add_ReturnsOk_WhenObjectIsAddedSuccessfully() 
     {
         // Arrange
         var environmentId = Guid.NewGuid();
@@ -82,8 +82,8 @@ public class Object2DControllerTests
         var result = await controller.Add(environmentId, object2D);
 
         // Assert
-        Assert.IsInstanceOfType<OkObjectResult>(result); // Generieke overload
-        var okResult = (OkObjectResult)result;  // Cast naar het juiste type
+        Assert.IsInstanceOfType<OkObjectResult>(result); 
+        var okResult = (OkObjectResult)result;  
         var addedObject = okResult.Value as Object2D;
         Assert.IsNotNull(addedObject);
         Assert.AreEqual(object2D, addedObject);

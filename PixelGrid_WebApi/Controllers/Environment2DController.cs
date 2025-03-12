@@ -50,17 +50,9 @@ namespace PixelGrid_WebApi.Controllers
             }
 
             var data = environment;
+
             data.ID = Guid.NewGuid();
-
-            if (string.IsNullOrEmpty(environment.OwnerUserId))
-            {
-                data.OwnerUserId = userId;
-            }else
-            {
-                data.OwnerUserId = userId;
-            }
-  
-
+            data.OwnerUserId = userId;
 
             await sqlE2DS.InsertDataAsync(data);
 
