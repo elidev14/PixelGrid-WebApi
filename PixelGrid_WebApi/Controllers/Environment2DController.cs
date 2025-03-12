@@ -33,10 +33,12 @@ namespace PixelGrid_WebApi.Controllers
 
             // Check if the limit has not been exceeded. If it has, return a bad request.
             var existingEnvironments = await sqlE2DS.GetListOfDataAsync(userId);
+
             if (existingEnvironments.Count() >= 5)
             {
                 return BadRequest("You have reached the limit of 5 environments");
             }
+
 
             // Check if the environment already exists.
             var existingEnvironment = existingEnvironments
@@ -49,7 +51,16 @@ namespace PixelGrid_WebApi.Controllers
 
             var data = environment;
             data.ID = Guid.NewGuid();
-            data.OwnerUserId = userId;
+
+            if (string.IsNullOrEmpty(environment.OwnerUserId))
+            {
+                data.OwnerUserId = userId;
+            }else
+            {
+                data.OwnerUserId = userId;
+            }
+  
+
 
             await sqlE2DS.InsertDataAsync(data);
 
