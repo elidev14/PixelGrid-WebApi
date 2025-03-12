@@ -23,6 +23,7 @@ namespace PixelGrid_WebApi.Controllers
         public async Task<IActionResult> AddEnvironment2D([FromBody] Environment2D environment)
         {
 
+
             if (environment == null)
             {
                 return BadRequest("Invalid environment data.");
@@ -31,18 +32,24 @@ namespace PixelGrid_WebApi.Controllers
             string userId = authService.GetCurrentAuthenticatedUserId();
 
 
-            // Check if the limit has not beenn exceed if it has return a bad request
-            if (sqlE2DS.GetListOfDataAsync(userId).Result.Count() >= 5)
-                return BadRequest("You have reached the limit of 5 environments");
+            if (environment.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
+                return Unauthorized("User is not allowed to add this environment");
 
-            var existingEnvironment = (await sqlE2DS.GetListOfDataAsync(userId))
-                       .FirstOrDefault(e => e.OwnerUserId == userId && e.Name == environment.Name);
+            // Check if the limit has not been exceeded. If it has, return a bad request.
+            var existingEnvironments = await sqlE2DS.GetListOfDataAsync(userId);
+            if (existingEnvironments.Count() >= 5)
+            {
+                return BadRequest("You have reached the limit of 5 environments");
+            }
+
+            // Check if the environment already exists.
+            var existingEnvironment = existingEnvironments
+                .FirstOrDefault(e => e.OwnerUserId == userId && e.Name == environment.Name);
 
             if (existingEnvironment != null)
             {
                 return Conflict(new { message = $"An environment with the name '{environment.Name}' already exists." });
             }
-
 
             var data = environment;
             data.ID = Guid.NewGuid();
@@ -53,17 +60,21 @@ namespace PixelGrid_WebApi.Controllers
             return Ok(data);
         }
 
+
         [HttpPut]
         public async Task<IActionResult> UpdateEnvironment2D(Environment2D environment)
         {
+
             if (environment == null)
                 return BadRequest("Invalid environment object");
+
 
             if (environment.ID == Guid.Empty)
                 return BadRequest("Invalid ID");
 
             if (environment.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
                 return Unauthorized("User is not allowed to view the environment");
+
 
             await sqlE2DS.UpdateDataAsync(environment);
 
@@ -83,8 +94,10 @@ namespace PixelGrid_WebApi.Controllers
         {
             var data = sqlE2DS.GetDataAsync(guid).Result;
 
+
             if (data.ID == Guid.Empty)
                 return BadRequest("Invalid ID");
+
 
             if (data.OwnerUserId != authService.GetCurrentAuthenticatedUserId())
                 return Unauthorized("User is not allowed to view the environment");

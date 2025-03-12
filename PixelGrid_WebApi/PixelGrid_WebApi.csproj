@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Repositories\**" />
+    <Content Remove="Repositories\**" />
+    <EmbeddedResource Remove="Repositories\**" />
+    <None Remove="Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avans.Identity.DapperOrm" Version="1.0.3" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="9.0.2" />
@@ -16,10 +23,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>
